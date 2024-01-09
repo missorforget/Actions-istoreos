@@ -30,19 +30,12 @@ jobs:
     strategy:
       matrix:
         REPO_BRANCH:
-          # - main
           - istoreos-22.03
-          # - istoreos-23.05
         ARCHITECTURE:
-          - rk33xx
-          - rk35xx
+          - xiguapi
           - x86
         os:
           - ubuntu-22.04
-        include:
-          - REPO_BRANCH: istoreos-23.05
-            ARCHITECTURE: x86-alpha
-            os: ubuntu-22.04
 
       fail-fast: false
 
@@ -103,10 +96,8 @@ jobs:
         prefix: ${{ github.workspace }}/openwrt
 
     - name: 加载自定义 feeds
-      env:
-        FEEDS_CONF_PATH: ${{ matrix.ARCHITECTURE }}/${{ env.FEEDS_CONF }}
       run: |
-        [ -e $FEEDS_CONF_PATH ] && mv $FEEDS_CONF_PATH openwrt/$FEEDS_CONF
+        [ -e $FEEDS_CONF ] && mv $FEEDS_CONF openwrt/$FEEDS_CONF
         chmod +x $DIY_P1_SH
         cd openwrt
         $GITHUB_WORKSPACE/$DIY_P1_SH
@@ -119,7 +110,7 @@ jobs:
 
     - name: 加载自定义配置
       env:
-        CONFIG_FILE_PATH: ${{ matrix.ARCHITECTURE }}/${{ env.CONFIG_FILE }}
+        CONFIG_FILE_PATH: ${{ matrix.ARCHITECTURE }}${{ env.CONFIG_FILE }}
       run: |
         [ -e files ] && mv files openwrt/files
         [ -e $CONFIG_FILE_PATH ] && mv $CONFIG_FILE_PATH openwrt/$CONFIG_FILE
